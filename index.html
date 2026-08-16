@@ -17,7 +17,9 @@
 html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
 body{font-family:"PingFang SC","Microsoft YaHei","Hiragino Sans GB",sans-serif;background:var(--bg);color:var(--text);min-height:100vh;padding-bottom:76px;touch-action:manipulation;overscroll-behavior-y:none}
 button,input{touch-action:manipulation;font-family:inherit}
-header{background:linear-gradient(135deg,#4a7dff,#8c6ff0);color:#fff;padding:18px 20px 16px;border-radius:0 0 22px 22px;box-shadow:var(--shadow)}
+header{background:linear-gradient(135deg,#4a7dff,#8c6ff0);color:#fff;padding:18px 20px 16px;border-radius:0 0 22px 22px;box-shadow:var(--shadow);position:relative}
+.snd-btn{position:absolute;right:16px;top:50%;transform:translateY(-50%);background:rgba(255,255,255,.18);border:none;border-radius:50%;width:40px;height:40px;font-size:19px;cursor:pointer;color:#fff}
+.snd-btn:active{transform:translateY(-50%) scale(.9)}
 header h1{font-size:21px;display:flex;align-items:center;gap:8px}
 header .sub{font-size:13px;opacity:.85;margin-top:4px}
 .wrap{max-width:640px;margin:0 auto;padding:14px}
@@ -146,6 +148,7 @@ nav button.on{color:var(--primary);font-weight:700}
 <header>
   <h1>🏆 小学奥数闯关乐园</h1>
   <div class="sub">1-6年级 · 每天进步一点点</div>
+  <button id="sndBtn" class="snd-btn" onclick="toggleSnd()" title="音效开关">🔊</button>
 </header>
 <div class="wrap">
   <div id="view-home" class="view on"></div>
@@ -739,8 +742,46 @@ function answerFill() {
   const ansShow = Array.isArray(q.a) ? q.a[0] : q.a;
   finishAnswer(ok, "正确答案：" + ansShow);
 }
+/* ================= 音效（Web Audio 合成，无需外部文件） ================= */
+let audioCtx = null;
+function sndOn() { return localStorage.getItem("aoshu_snd") !== "off"; }
+function toggleSnd() {
+  localStorage.setItem("aoshu_snd", sndOn() ? "off" : "on");
+  updateSndBtn();
+  if (sndOn()) playSound(true); // 开启时试听一下
+}
+function updateSndBtn() {
+  const b = document.getElementById("sndBtn");
+  if (b) b.textContent = sndOn() ? "🔊" : "🔇";
+}
+function playNote(freq, start, dur, type, vol) {
+  const o = audioCtx.createOscillator(), g = audioCtx.createGain();
+  o.type = type; o.frequency.value = freq;
+  g.gain.setValueAtTime(vol, start);
+  g.gain.exponentialRampToValueAtTime(0.001, start + dur);
+  o.connect(g); g.connect(audioCtx.destination);
+  o.start(start); o.stop(start + dur + 0.02);
+}
+function playSound(ok) {
+  if (!sndOn()) return;
+  try {
+    audioCtx = audioCtx || new (window.AudioContext || window.webkitAudioContext)();
+    if (audioCtx.state === "suspended") audioCtx.resume();
+    const t = audioCtx.currentTime;
+    if (ok) { // 答对：清脆上行三连音 (E5-G5-C6)
+      playNote(659, t, 0.14, "sine", 0.28);
+      playNote(784, t + 0.09, 0.14, "sine", 0.28);
+      playNote(1047, t + 0.18, 0.22, "sine", 0.30);
+    } else {  // 答错：低沉下行两连音
+      playNote(220, t, 0.16, "triangle", 0.30);
+      playNote(156, t + 0.14, 0.30, "triangle", 0.28);
+    }
+  } catch (e) {}
+}
+
 function finishAnswer(ok, ansText) {
   QZ.answered = true;
+  playSound(ok);
   const q = QZ.list[QZ.idx];
   if (ok) QZ.right++;
   // 记录
@@ -905,6 +946,7 @@ function renderAch() {
 })();
 
 /* ================= 启动 ================= */
+updateSndBtn();
 renderHome();
 </script>
 </body>
