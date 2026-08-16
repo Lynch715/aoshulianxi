@@ -1,0 +1,12 @@
+{
+  "name": "小学奥数闯关乐园",
+  "short_name": "奥数乐园",
+  "start_url": ".",
+  "display": "standalone",
+  "background_color": "#f0f6ff",
+  "theme_color": "#4a7dff",
+  "icons": [
+    {"src": "icon-192.png", "sizes": "192x192", "type": "image/png"},
+    {"src": "icon-512.png", "sizes": "512x512", "type": "image/png"}
+  ]
+}
