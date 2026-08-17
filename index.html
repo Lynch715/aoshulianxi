@@ -23,22 +23,22 @@
 html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
 body{font-family:"PingFang SC","Microsoft YaHei","Hiragino Sans GB",sans-serif;background:var(--bg);color:var(--text);min-height:100vh;padding-bottom:76px;touch-action:manipulation;overscroll-behavior-y:none}
 button,input{touch-action:manipulation;font-family:inherit}
-header{background:linear-gradient(135deg,#4a7dff,#8c6ff0);color:#fff;padding:18px 20px 16px;border-radius:0 0 22px 22px;box-shadow:var(--shadow);position:relative}
-.snd-btn{position:absolute;right:16px;top:50%;transform:translateY(-50%);background:rgba(255,255,255,.18);border:none;border-radius:50%;width:40px;height:40px;font-size:19px;cursor:pointer;color:#fff}
+header{background:linear-gradient(135deg,#4a7dff,#8c6ff0);color:#fff;padding:18px 56px 16px;border-radius:0 0 22px 22px;box-shadow:var(--shadow);position:relative;text-align:center}
+.snd-btn{position:absolute;right:14px;top:50%;transform:translateY(-50%);background:rgba(255,255,255,.18);border:none;border-radius:50%;width:40px;height:40px;font-size:19px;cursor:pointer;color:#fff}
 .snd-btn:active{transform:translateY(-50%) scale(.9)}
-header h1{font-size:21px;display:flex;align-items:center;gap:8px}
+header h1{font-size:21px;display:flex;align-items:center;justify-content:center;gap:8px;white-space:nowrap}
 header .sub{font-size:13px;opacity:.85;margin-top:4px}
 .wrap{max-width:640px;margin:0 auto;padding:14px}
 .card{background:var(--card);border-radius:16px;padding:16px;box-shadow:var(--shadow);margin-bottom:14px}
 .stats-row{display:flex;gap:10px;margin-bottom:14px}
-.stat{flex:1;background:var(--card);border-radius:14px;padding:12px 8px;text-align:center;box-shadow:var(--shadow)}
-.stat .num{font-size:22px;font-weight:700;color:var(--primary)}
-.stat .lbl{font-size:12px;color:var(--muted);margin-top:2px}
-h2.sec{font-size:16px;margin:6px 2px 10px;display:flex;align-items:center;gap:6px}
+.stat{flex:1;background:var(--card);border-radius:14px;padding:12px 4px;text-align:center;box-shadow:var(--shadow);display:flex;flex-direction:column;justify-content:center}
+.stat .num{font-size:22px;font-weight:700;color:var(--primary);line-height:28px;height:28px}
+.stat .lbl{font-size:12px;color:var(--muted);margin-top:3px;line-height:16px;white-space:nowrap}
+h2.sec{font-size:16px;margin:8px 4px 10px;display:flex;align-items:center;gap:6px}
 .grade-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
 .grade-btn{border:none;border-radius:14px;padding:16px 8px;font-size:16px;font-weight:700;color:#fff;cursor:pointer;box-shadow:var(--shadow);transition:transform .12s}
 .grade-btn:active{transform:scale(.95)}
-.grade-btn small{display:block;font-weight:400;font-size:11px;margin-top:4px;opacity:.9}
+.grade-btn small{display:block;font-weight:400;font-size:11px;margin-top:4px;opacity:.9;white-space:nowrap}
 .g1{background:linear-gradient(135deg,#ff9f43,#ffbe76)} .g2{background:linear-gradient(135deg,#2eb872,#6ee7a8)}
 .g3{background:linear-gradient(135deg,#4a7dff,#7ea2ff)} .g4{background:linear-gradient(135deg,#8c6ff0,#b39bff)}
 .g5{background:linear-gradient(135deg,#ff5a5f,#ff8a8e)} .g6{background:linear-gradient(135deg,#00a8cc,#57d0e8)}
@@ -131,6 +131,13 @@ nav button.on{color:var(--primary);font-weight:700}
   .grade-btn small{font-size:12px}
   .ach-grid{grid-template-columns:repeat(6,1fr)}
   .stats-row .stat .num{font-size:26px}
+}
+/* 小屏手机：统计卡 2×2，避免拥挤 */
+@media (max-width:374px){
+  .stats-row{flex-wrap:wrap}
+  .stat{flex:1 1 42%}
+  header{padding:14px 50px 12px}
+  header h1{font-size:18px}
 }
 /* 手机横屏（矮屏）：压缩头部与底栏，保证内容可见 */
 @media (orientation:landscape) and (max-height:500px){
@@ -651,7 +658,7 @@ function renderHome() {
   let html = `
   <div class="stats-row">
     <div class="stat"><div class="num">${todayN}</div><div class="lbl">今日已练</div></div>
-    <div class="stat"><div class="num">${streak()}🔥</div><div class="lbl">连续打卡</div></div>
+    <div class="stat"><div class="num">${streak()}</div><div class="lbl">连续打卡🔥</div></div>
     <div class="stat"><div class="num">${acc}%</div><div class="lbl">总正确率</div></div>
     <div class="stat"><div class="num">${ta}</div><div class="lbl">累计答题</div></div>
   </div>`;
